@@ -29,6 +29,8 @@ class CoreClient:
         )
         with open(PUBLIC_FILE, "wb") as f: f.write(pub_pem)
 
+
+
         # Encrypt Private Key (Student 1's logic)
         print("[Crypto] Encrypting Private Key with PIN...")
         priv_pem = priv.private_bytes(
