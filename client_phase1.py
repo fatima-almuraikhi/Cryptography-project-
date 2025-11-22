@@ -12,7 +12,7 @@ class CoreClient:
     def __init__(self):
         print("--- Phase 1: Crypto & Registration Client ---")
 
-    # --- STUDENT 1: CRYPTOGRAPHY WORK ---
+    # --- STUDENT 1: CRYPTOGRAPHY WORK --- (fatima)
     def derive_key(self, pin: str, salt: bytes) -> bytes:
         kdf = PBKDF2HMAC(algorithm=hashes.SHA256(), length=32, salt=salt, iterations=200000)
         return kdf.derive(pin.encode())
@@ -28,8 +28,6 @@ class CoreClient:
             format=serialization.PublicFormat.SubjectPublicKeyInfo,
         )
         with open(PUBLIC_FILE, "wb") as f: f.write(pub_pem)
-
-
 
         # Encrypt Private Key (Student 1's logic)
         print("[Crypto] Encrypting Private Key with PIN...")
@@ -51,3 +49,38 @@ class CoreClient:
         }
         with open(ENCRYPTED_FILE, "w") as f: json.dump(blob, f)
         print("[Success] Keys generated and saved.")
+
+
+    # NETWORK REGISTRATION TASK --- (moudi)
+    def register(self, username, device_id):
+        """Reads the public key and sends it to the server."""
+        if not os.path.exists(PUBLIC_FILE):
+            print("[Error] No keys found. Run init first.")
+            return
+
+        with open(PUBLIC_FILE, "rb") as f:
+            pub_pem = f.read().decode()
+
+        payload = {
+            "username": username,
+            "device_id": device_id,
+            "public_key_pem": pub_pem,
+            "meta": {"client_version": "v1.0_terminal"}
+        }
+        print(f"[Network] Connecting to {SERVER_URL}/register...")
+        try:
+            r = requests.post(f"{SERVER_URL}/register", json=payload)
+            print(f"[Server Response {r.status_code}]: {r.text}")
+        except Exception as e:
+            print(f"[Network Error] {e}")
+
+if __name__ == "__main__":
+    client = CoreClient()
+    action = input("Select Action (1: Init Keys, 2: Register): ")
+    if action == "1":
+        p = input("Set a PIN: ")
+        client.init_keys(p)
+    elif action == "2":
+        u = input("Username: ")
+        d = input("Device ID: ")
+        client.register(u, d)
