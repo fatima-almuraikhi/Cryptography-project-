@@ -51,7 +51,7 @@ class CoreClient:
         print("[Success] Keys generated and saved.")
 
 
-    # NETWORK REGISTRATION TASK --- (moudi)
+    # NETWORK REGISTRATION TASK --- (moudi) 
     def register(self, username, device_id):
         """Reads the public key and sends it to the server."""
         if not os.path.exists(PUBLIC_FILE):
